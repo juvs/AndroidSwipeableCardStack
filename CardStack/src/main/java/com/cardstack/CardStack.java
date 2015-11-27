@@ -1,4 +1,4 @@
-package com.wenchao.cardstack;
+package com.cardstack;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.database.DataSetObserver;
-
 
 public class CardStack extends RelativeLayout {
     private static final String LOG_TAG = "CardStack";

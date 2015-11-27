@@ -48,7 +48,7 @@ Configuration
 Put CardStack in your layout file
 
 ```xml
- <com.wenchao.cardstack.CardStack
+ <com.cardstack.CardStack
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

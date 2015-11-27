@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.wenchao.cardstack.CardStack;
+import com.cardstack.CardStack;
 
 
 public class MyActivity extends Activity {

@@ -1,10 +1,10 @@
-package com.wenchao.cardstack;
+package com.cardstack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import com.wenchao.animation.RelativeLayoutParamsEvaluator;
+import com.cardstack.animation.RelativeLayoutParamsEvaluator;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -12,7 +12,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;

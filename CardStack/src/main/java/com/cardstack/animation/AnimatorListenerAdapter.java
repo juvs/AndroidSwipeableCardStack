@@ -1,4 +1,4 @@
-package com.wenchao.animation;
+package com.cardstack.animation;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;

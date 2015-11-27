@@ -1,4 +1,4 @@
-package com.wenchao.card_stack;
+package com.card_stack;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

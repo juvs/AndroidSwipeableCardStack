@@ -1,6 +1,5 @@
-package com.wenchao.cardstack;
+package com.cardstack;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
