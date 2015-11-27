@@ -1,11 +1,10 @@
 package com.cardstack;
 
-import java.util.ArrayList;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.database.DataSetObserver;
+
+import java.util.ArrayList;
 
 public class CardStack extends RelativeLayout {
     private static final String LOG_TAG = "CardStack";
@@ -52,15 +52,15 @@ public class CardStack extends RelativeLayout {
         // 2 | 3
         // swipe distance, most likely be used with height and width of a view ;
 
-        public boolean swipeEnd(int section, float distance);
+        boolean swipeEnd(int section, float distance);
 
-        public boolean swipeStart(int section, float distance);
+        boolean swipeStart(int section, float distance);
 
-        public boolean swipeContinue(int section, float distanceX, float distanceY);
+        boolean swipeContinue(int section, float distanceX, float distanceY);
 
-        public void discarded(int mIndex, int direction);
+        void discarded(int mIndex, int direction);
 
-        public void topCardTapped();
+        void topCardTapped();
     }
 
     public boolean isRotateCardDeck() {
