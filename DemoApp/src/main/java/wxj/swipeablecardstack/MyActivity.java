@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.wenchao.cardstack.CardStack;
 
@@ -22,6 +23,7 @@ public class MyActivity extends Activity {
         //
         mCardStack.setContentResource(R.layout.card_content);
         mCardStack.setStackMargin(20);
+        mCardStack.setRotateCardDeck(true);
 
         //
         mCardAdapter = new CardsDataAdapter(getApplicationContext(),0);
@@ -31,11 +33,12 @@ public class MyActivity extends Activity {
         mCardAdapter.add("test4");
         mCardAdapter.add("test5");
 
-
-
         mCardStack.setAdapter(mCardAdapter);
     }
 
+    public void agregarTag(View view) {
+        mCardAdapter.add("test6");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
