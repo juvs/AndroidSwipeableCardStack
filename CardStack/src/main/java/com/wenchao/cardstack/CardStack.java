@@ -19,6 +19,7 @@ import android.database.DataSetObserver;
 
 
 public class CardStack extends RelativeLayout {
+    private static final String LOG_TAG = "CardStack";
     private int mIndex = 0;
     private int mNumVisible = 4;
     private ArrayAdapter<?> mAdapter;
@@ -30,8 +31,14 @@ public class CardStack extends RelativeLayout {
     private boolean mSimpleDismissAnimation;
     private boolean mRandomBackgroundColor;
 
-    private boolean mRotateCardDeck ;
+    private boolean mRotateCardDeck;
+
     private boolean mRestartIndex = false;
+
+    private int chainEnd = 0;
+    private int chainLink = 0;
+    private int chainDismissDirection;
+    private boolean chainingDismiss = false;
     //private Queue<View> mIdleStack = new Queue<View>;
 
 
@@ -98,26 +105,86 @@ public class CardStack extends RelativeLayout {
     }
 
     public void discardTop(final int direction) {
+        discardTop(direction, null, 250);
+    }
+
+    public void discardTop(final int direction, long duration) {
+        discardTop(direction, null, duration);
+    }
+
+    public void discardTop(final int direction, final CardStackCallback callback, long duration) {
         mCardAnimator.discard(direction, new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator arg0) {
                 mCardAnimator.initLayout();
                 mIndex++;
-                mEventListener.discarded(mIndex, direction);
 
                 //mIndex = mIndex%mAdapter.getCount();
                 loadLast();
 
+                //Para rotar el arreglo...
+                if (mRestartIndex && mIndex > (mAdapter.getCount() - 1)) {
+                    mIndex = 0;
+                    mRestartIndex = false;
+                }
+
+                //Don't call until end animation...
+                if (!chainingDismiss) {
+                    mEventListener.discarded(mIndex, direction);
+                }
                 viewCollection.get(0).setOnTouchListener(null);
-                viewCollection.get(viewCollection.size() - 1)
-                        .setOnTouchListener(mOnTouchListener);
+                viewCollection.get(viewCollection.size() - 1).setOnTouchListener(mOnTouchListener);
+                if (null != callback) {
+                    callback.onDismissCard();
+                }
             }
-        });
+        }, duration);
     }
 
     public int getCurrIndex() {
         //sync?
         return mIndex;
+    }
+
+    private void chainDiscardTop() {
+        discardTop(chainDismissDirection, new CardStackCallback() {
+            @Override
+            public void onDismissCard() {
+                if (chainLink < chainEnd) {
+                    chainLink++;
+                    chainDismissDirection = chainDismissDirection == CardAnimator.DISMISS_DOWN_RIGHT ? CardAnimator.DISMISS_DOWN_LEFT : CardAnimator.DISMISS_DOWN_RIGHT;
+                    if (chainLink == chainEnd) {
+                        chainingDismiss = false;
+                    }
+                    chainDiscardTop();
+
+                }
+            }
+        }, 200);
+    }
+
+    public synchronized void gotoCard(int index, boolean animate) {
+        if (index >= 0 && index <= mAdapter.getCount()) {
+            if (animate && mRotateCardDeck) {
+                int cardsToDismiss = index - mIndex;
+                if (cardsToDismiss < 0) {
+                    cardsToDismiss = mAdapter.getCount() - (index + 1) + index;
+                }
+                if (cardsToDismiss > 0) {
+                    chainLink = 1;
+                    chainEnd = cardsToDismiss;
+                    chainDismissDirection = CardAnimator.DISMISS_DOWN_RIGHT;
+                    chainingDismiss = true;
+                    chainDiscardTop();
+                }
+            } else {
+                mIndex = index;
+                reset(false);
+            }
+        } else {
+            Log.w(LOG_TAG, "Index card to go is out of bounds of deck.");
+        }
+
     }
 
     //only necessary when I need the attrs from xml, this will be used when inflating layout
@@ -175,6 +242,7 @@ public class CardStack extends RelativeLayout {
         if (resetIndex) mIndex = 0;
         removeAllViews();
         viewCollection.clear();
+
         for (int i = 0; i < mNumVisible; i++) {
             addContainerViews();
         }
@@ -241,7 +309,6 @@ public class CardStack extends RelativeLayout {
                         public void onAnimationEnd(Animator arg0) {
                             mCardAnimator.initLayout();
                             mIndex++;
-                            mEventListener.discarded(mIndex, direction);
 
                             //mIndex = mIndex%mAdapter.getCount();
                             loadLast();
@@ -251,6 +318,8 @@ public class CardStack extends RelativeLayout {
                                 mIndex = 0;
                                 mRestartIndex = false;
                             }
+                            mEventListener.discarded(mIndex, direction);
+
                             viewCollection.get(0).setOnTouchListener(null);
                             viewCollection.get(viewCollection.size() - 1)
                                     .setOnTouchListener(mOnTouchListener);
@@ -310,12 +379,20 @@ public class CardStack extends RelativeLayout {
     }
 
     private void loadData() {
+        boolean addView = true;
         for (int i = mNumVisible - 1; i >= 0; i--) {
             ViewGroup parent = (ViewGroup) viewCollection.get(i);
             int index = (mIndex + mNumVisible - 1) - i;
             if (index > mAdapter.getCount() - 1) {
-                parent.setVisibility(View.GONE);
-            } else {
+                if (mRotateCardDeck) {
+                    //Start from the beginning of the deck
+                    index = index - mAdapter.getCount();
+                } else {
+                    parent.setVisibility(View.GONE);
+                    addView = false;
+                }
+            }
+            if (addView) {
                 View child = mAdapter.getView(index, getContentView(), this);
                 parent.addView(child);
                 parent.setVisibility(View.VISIBLE);
@@ -355,4 +432,10 @@ public class CardStack extends RelativeLayout {
     public int getStackSize() {
         return mNumVisible;
     }
+
+    private interface CardStackCallback {
+        void onDismissCard();
+    }
 }
+
+

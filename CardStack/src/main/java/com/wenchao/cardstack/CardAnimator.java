@@ -20,6 +20,12 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 public class CardAnimator {
+
+    public static final int DISMISS_UP_LEFT = 0;
+    public static final int DISMISS_UP_RIGTH = 1;
+    public static final int DISMISS_DOWN_LEFT = 2;
+    public static final int DISMISS_DOWN_RIGHT = 3;
+
     private static final String DEBUG_TAG = "CardAnimator";
     private static final int REMOTE_DISTANCE = 1000;
     public ArrayList<View> mCardCollection;
@@ -175,6 +181,9 @@ public class CardAnimator {
     }
 
     public void discard(int direction, final AnimatorListener al) {
+        discard(direction, al, 250);
+    }
+    public void discard(int direction, final AnimatorListener al, long duration) {
         AnimatorSet as = new AnimatorSet();
         ArrayList<Animator> aCollection = new ArrayList<Animator>();
 
@@ -191,7 +200,7 @@ public class CardAnimator {
             }
         });
 
-        discardAnim.setDuration(250);
+        discardAnim.setDuration(duration);
         aCollection.add(discardAnim);
 
         for (int i = 0; i < mCardCollection.size(); i++) {
@@ -202,7 +211,7 @@ public class CardAnimator {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
             RelativeLayout.LayoutParams endLayout = new RelativeLayout.LayoutParams(layoutParams);
             ValueAnimator layoutAnim = ValueAnimator.ofObject(new RelativeLayoutParamsEvaluator(), endLayout, mLayoutsMap.get(nv));
-            layoutAnim.setDuration(250);
+            layoutAnim.setDuration(duration);
             layoutAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator value) {
@@ -232,11 +241,8 @@ public class CardAnimator {
 
         });
 
-
         as.playTogether(aCollection);
         as.start();
-
-
     }
 
     public void reverse(MotionEvent e1, MotionEvent e2) {

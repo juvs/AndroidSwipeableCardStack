@@ -2,6 +2,7 @@ package wxj.swipeablecardstack;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,10 +35,44 @@ public class MyActivity extends Activity {
         mCardAdapter.add("test5");
 
         mCardStack.setAdapter(mCardAdapter);
+        mCardStack.setListener(new CardStack.CardEventListener() {
+            @Override
+            public boolean swipeEnd(int section, float distance) {
+                return (distance>300)? true : false;
+            }
+
+            @Override
+            public boolean swipeStart(int section, float distance) {
+                return true;
+            }
+
+            @Override
+            public boolean swipeContinue(int section, float distanceX, float distanceY) {
+                return true;
+            }
+
+            @Override
+            public void discarded(int mIndex, int direction) {
+                Log.d("MyActivity", "Card index : " + mIndex + " discarded, curr index is : " + mCardStack.getCurrIndex());
+            }
+
+            @Override
+            public void topCardTapped() {
+                Log.d("MyActivity", "Top card tapped, index is : " + mCardStack.getCurrIndex());
+            }
+        });
     }
 
     public void agregarTag(View view) {
         mCardAdapter.add("test6");
+    }
+
+    public void irAlTag(View view) {
+        mCardStack.gotoCard(3, true);
+    }
+
+    public void facturarTag(View view) {
+        Log.d("MyActivity", "Facturar img button click, position : " + mCardStack.getCurrIndex());
     }
 
     @Override

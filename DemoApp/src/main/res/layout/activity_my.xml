@@ -39,8 +39,9 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button2" />
+            android:text="Ir al card 5"
+            android:id="@+id/button2"
+            android:onClick="irAlTag"/>
     </LinearLayout>
 
 </RelativeLayout>
